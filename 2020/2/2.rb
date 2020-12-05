@@ -10,18 +10,39 @@ class Rule
   end
 end
 
+class RuleTwo
+  def initialize(pos_a, pos_b, letter)
+    @pos_a = pos_a - 1
+    @pos_b = pos_b - 1
+    @letter = letter
+  end
+
+  def valid? s
+    s.split("").collect.with_index do | e,i |
+      e if e == @letter and ( i == @pos_a or i == @pos_b )
+    end.one?
+  end
+end
+
 class Two
   class << Two
-    def split_string s
+    def split_string klass, s
       /^(?<min>.+)-(?<max>.+) (?<letter>.): (?<p>.*$)/i =~ s
-      [ Rule.new(min.to_i, max.to_i, letter), p ]
+      [ klass.new(min.to_i, max.to_i, letter), p ]
     end
   end
 end
 
 @valid = 0
 File.readlines("./input").each do |l|
-  r, s = Two.split_string(l)
+  r, s = Two.split_string(Rule, l)
   @valid = @valid + 1 if r.valid? s
 end
-puts @valid
+puts "1: #{@valid}"
+
+@valid = 0
+File.readlines("./input").each do |l|
+  r, s = Two.split_string(RuleTwo, l)
+  @valid = @valid + 1 if r.valid? s
+end
+puts "2: #{@valid}"
